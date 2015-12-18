@@ -18,24 +18,24 @@ defmodule AdventOfCode do
   def run(commands, list, fun) do
     Enum.reduce commands, list, fn command, list ->
       %{ x1: x1, x2: x2, y1: y1, y2: y2 } = command
-      run_for_column(x1, y1, x2, y2, list, fun.(command.type), 0)
+      run_for_column({x1, y1, x2, y2}, list, fun.(command.type), 0)
     end
   end
 
-  defp run_for_column(_, _, _, _, [], _fun, _y), do: []
-  defp run_for_column(x1, y1, x2, y2, [head | tail], fun, y) when y1 <= y and y <= y2 do
-    [run_for_row(x1, x2, head, fun, 0) | run_for_column(x1, y1, x2, y2, tail, fun, y + 1)]
+  defp run_for_column(_, [], _fun, _y), do: []
+  defp run_for_column({x1, y1, x2, y2}, [head | tail], fun, y) when y1 <= y and y <= y2 do
+    [run_for_row({x1, x2}, head, fun, 0) | run_for_column({x1, y1, x2, y2}, tail, fun, y + 1)]
   end
-  defp run_for_column(x1, y1, x2, y2, [head | tail], fun, y) do
-    [head | run_for_column(x1, y1, x2, y2, tail, fun, y + 1)]
+  defp run_for_column({x1, y1, x2, y2}, [head | tail], fun, y) do
+    [head | run_for_column({x1, y1, x2, y2}, tail, fun, y + 1)]
   end
 
-  defp run_for_row(_, _, [], _fun, _x), do: []
-  defp run_for_row(x1, x2, [head | tail], fun, x) when x1 <= x and x <= x2 do
-    [fun.(head) | run_for_row(x1, x2, tail, fun, x + 1)]
+  defp run_for_row(_, [], _fun, _x), do: []
+  defp run_for_row({x1, x2}, [head | tail], fun, x) when x1 <= x and x <= x2 do
+    [fun.(head) | run_for_row({x1, x2}, tail, fun, x + 1)]
   end
-  defp run_for_row(x1, x2, [head | tail], fun, x) do
-    [head | run_for_row(x1, x2, tail, fun, x + 1)]
+  defp run_for_row({x1, x2}, [head | tail], fun, x) do
+    [head | run_for_row({x1, x2}, tail, fun, x + 1)]
   end
 end
 
